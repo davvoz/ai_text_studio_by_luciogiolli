@@ -1,0 +1,39 @@
+/* Language selection with custom option */
+.language-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.custom-language-wrapper {
+    display: flex;
+    width: 100%;
+    margin-top: 8px;
+    transition: all var(--transition-fast);
+}
+
+.custom-language-wrapper.hidden {
+    display: none;
+}
+
+.custom-language-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+}
+
+.dark-theme .custom-language-input {
+    background-color: rgba(30, 42, 56, 0.3);
+}
+
+.custom-language-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
+    outline: none;
+}

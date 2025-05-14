@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Studio | Create, Transform, Innovate</title>
+    <meta name="theme-color" content="#2A9D8F">
+    <meta name="msapplication-navbutton-color" content="#2A9D8F">
+    <meta name="msapplication-TileColor" content="#2A9D8F">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#2A9D8F">
+    <link rel="mask-icon" href="favicon.svg" color="#2A9D8F">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="custom-language.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="app_icon.jpeg" alt="AI Text Studio" class="logo">
+                <div class="title-container">
+                    <h1>AI Text Studio</h1>
+                    <p class="tagline">Create, Transform, Innovate</p>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button id="themeToggle" title="Toggle dark/light theme"><i class="fas fa-moon"></i></button>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div class="sidebar">
+                <div class="app-nav">
+                    <button class="nav-btn active" data-tab="generate">
+                        <i class="fas fa-robot"></i>
+                        <span>Generate</span>
+                    </button>
+                    <button class="nav-btn" data-tab="format">
+                        <i class="fas fa-magic"></i>
+                        <span>Format</span>
+                    </button>
+                    <button class="nav-btn settings-btn" id="configToggle">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="workspace">
+                    <div class="input-section">
+                        <div class="card input-card" id="inputCard">
+                            <!-- Format Tab Content -->
+                            <div id="formatTab" class="tab-content">
+                                <div class="card-header">
+                                    <h2><i class="fas fa-keyboard"></i> Your Text</h2>
+                                </div>
+                                <div class="card-body">
+                                    <textarea id="userText" placeholder="Enter your text here..."></textarea>
+                                
+                                    <div class="style-selector">
+                                        <h3><i class="fas fa-magic"></i> Style:</h3>
+                                        <div class="style-options">
+                                            <button class="style-btn" data-style="social"><i class="fas fa-hashtag"></i> Social</button>
+                                            <button class="style-btn" data-style="blog"><i class="fas fa-blog"></i> Blog</button>
+                                            <button class="style-btn" data-style="minimal"><i class="fas fa-feather-alt"></i> Minimal</button>
+                                        </div>
+                                    </div>
+                                
+                                    <button id="formatBtn" class="action-btn"><i class="fas fa-wand-magic-sparkles"></i> Format</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Generate Tab Content -->
+                            <div id="generateTab" class="tab-content active">
+                                <div class="card-header">
+                                    <h2><i class="fas fa-lightbulb"></i> Topic/Keywords</h2>
+                                </div>
+                                <div class="card-body">
+                                    <textarea id="genKeywords" placeholder="Enter topic or keywords..."></textarea>
+                                    
+                                    <div class="options-container">
+                                        <div class="option-row">
+                                            <h3><i class="fas fa-pen-fancy"></i> Type:</h3>
+
+                                            <select id="genStyleSelect" class="select-control" aria-label="Select text type">
+                                                <option value="news">News Article</option>
+                                                <option value="blog">Blog Post</option>
+                                                <option value="essay">Essay</option>
+                                                <option value="diary">Diary</option>
+                                                <option value="story">Short Story</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="option-row">
+                                            <h3><i class="fas fa-language"></i> Language:</h3>
+                                            <div class="language-container">
+                                                <select id="languageSelect" class="select-control" aria-label="Select language">
+                                                    <option value="italian">Italian</option>
+                                                    <option value="english">English</option>
+                                                    <option value="spanish">Spanish</option>
+                                                    <option value="french">French</option>
+                                                    <option value="german">German</option>
+                                                    <option value="portuguese">Portuguese</option>
+                                                    <option value="chinese">Chinese</option>
+                                                    <option value="japanese">Japanese</option>
+                                                    <option value="korean">Korean</option>
+                                                    <option value="custom">Other (Custom)</option>
+                                                </select>
+                                                <div id="customLanguageWrapper" class="custom-language-wrapper hidden">
+                                                    <input type="text" id="customLanguage" class="custom-language-input" placeholder="Enter language name..." aria-label="Custom language name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button id="generateBtn" class="action-btn"><i class="fas fa-robot"></i> Generate Text</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="output-section">
+                        <div class="card output-card">
+                            <div class="card-header with-actions">
+                                <h2><i class="fas fa-file-alt"></i> Result</h2>
+                                <div class="card-actions">
+                                    <button id="copyOutput" class="icon-btn" title="Copy to clipboard"><i class="fas fa-copy"></i></button>
+                                    <button id="downloadOutput" class="icon-btn" title="Download as file"><i class="fas fa-download"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="loader hidden" id="loader" style="display: none;">
+                                    <div class="spinner"></div>
+                                    <p>Generating...</p>
+                                </div>
+                                <div id="outputContainer">
+                                    <div id="markdownOutput" class="output-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Panel -->
+                <div id="configPanel" class="settings-panel hidden">
+                    <div class="settings-header">
+                        <h2><i class="fas fa-cog"></i> Settings</h2>
+                        <button id="closeSettings" class="icon-btn" title="Close panel"><i class="fas fa-times"></i></button>
+                    </div>
+                    
+                    <div class="settings-content">
+                        <div class="config-tabs">
+                            <button class="config-tab-btn active" data-tab="formatConfig">Formatting Prompts</button>
+                            <button class="config-tab-btn" data-tab="genConfig">Generation Prompts</button>
+                        </div>
+                        
+                        <div id="formatConfig" class="config-content active">
+                            <h3>Formatting Prompt Configuration</h3>
+                            <div class="prompt-config">
+                                <div class="config-group">
+                                    <h4><i class="fas fa-hashtag"></i> Social Media Prompt:</h4>
+                                    <label for="socialPrompt" class="sr-only">Prompt for Social Media formatting</label>
+                                    <textarea id="socialPrompt" class="config-prompt" placeholder="Enter the prompt for social media formatting..."></textarea>
+                                </div>
+                                <div class="config-group">
+                                    <h4><i class="fas fa-blog"></i> Blog Post Prompt:</h4>
+                                    <label for="blogPrompt" class="sr-only">Prompt for Blog Post formatting</label>
+                                    <textarea id="blogPrompt" class="config-prompt"></textarea>
+                                </div>
+                                <div class="config-group">
+                                    <h4><i class="fas fa-feather-alt"></i> Minimal Prompt:</h4>
+                                    <label for="minimalPrompt" class="sr-only">Prompt for Minimal formatting</label>
+                                    <textarea id="minimalPrompt" class="config-prompt"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="genConfig" class="config-content">
+                            <h3>Generation Prompt Configuration</h3>
+                            <div class="prompt-config">
+                                <div class="config-group">
+                                    <h4><i class="fas fa-newspaper"></i> News Article Prompt:</h4>
+                                    <label for="newsPrompt" class="sr-only">Prompt for News Article generation</label>
+                                    <textarea id="newsPrompt" class="config-prompt"></textarea>
+                                </div>
+                                <div class="config-group">
+                                    <h4><i class="fas fa-blog"></i> Blog Post Prompt:</h4>
+                                    <label for="blogGenPrompt" class="sr-only">Prompt for Blog Post generation</label>
+                                    <textarea id="blogGenPrompt" class="config-prompt"></textarea>
+                                </div>
+                                <div class="config-group">
+                                    <h4><i class="fas fa-book"></i> Essay Prompt:</h4>
+                                    <label for="essayPrompt" class="sr-only">Prompt for Essay generation</label>
+                                    <textarea id="essayPrompt" class="config-prompt"></textarea>
+                                </div>
+                                <div class="config-group">
+                                    <h4><i class="fas fa-book-open"></i> Diary Prompt:</h4>
+                                    <label for="diaryPrompt" class="sr-only">Prompt for Diary generation</label>
+                                    <textarea id="diaryPrompt" class="config-prompt"></textarea>
+                                </div>
+                                <div class="config-group">
+                                    <h4><i class="fas fa-feather"></i> Story Prompt:</h4>
+                                    <label for="storyPrompt" class="sr-only">Prompt for Story generation</label>
+                                    <textarea id="storyPrompt" class="config-prompt"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button id="saveConfig" class="action-btn"><i class="fas fa-save"></i> Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>AI Text Studio &copy; 2023-2025 by Lucio Giolli | <a href="#" id="aboutLink">About</a></p>
+        </footer>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>About AI Text Studio</h2>
+                <button id="closeModal" class="icon-btn" title="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>AI Text Studio is a powerful tool for generating and formatting texts using artificial intelligence. Whether you need to create blog posts, news articles, essays, or social media content, AI Text Studio has you covered.</p>
+                <p>Developed by Lucio Giolli, this application combines cutting-edge AI technology with an intuitive user interface to make content creation easier than ever.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
