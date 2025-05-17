@@ -1,4 +1,11 @@
-/* filepath: c:\progetti\ai_text_studio_by_luciogiolli\styles.css */
+/**
+ * AI Text Studio - Main Stylesheet
+ * A clean, modular CSS organization for a scalable application
+ */
+
+/*--------------------------------------------------------------
+# Base & Variables
+--------------------------------------------------------------*/
 * {
     margin: 0;
     padding: 0;
@@ -7,7 +14,7 @@
 }
 
 :root {
-    /* Light theme colors - Now with a more earthy, elegant palette */
+    /* Light theme colors - Earthy, elegant palette */
     --primary-color: #2A9D8F;
     --secondary-color: #E9C46A;
     --accent-color: #F4A261;
@@ -20,14 +27,22 @@
     --hover-color: #1D6E64;
     --success-color: #2A9D8F;
     --error-color: #E76F51;
+    
+    /* Shadows */
     --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    
+    /* Border radius */
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 16px;
+    
+    /* Transitions */
     --transition-fast: 0.2s ease;
     --transition-norm: 0.3s ease;
+    
+    /* Layout sizes */
     --main-header-height: 70px;
     --content-padding: 30px;
     --sidebar-width: 240px;
@@ -42,10 +57,13 @@
     --card-bg: #263A42;
     --text-primary: #E0E0E0;
     --text-secondary: #AAAAAA;
-    --border-color: #3A4A52;    --hover-color: #268075;
+    --border-color: #3A4A52;
+    --hover-color: #268075;
 }
 
-/* Classe hidden generica */
+/*--------------------------------------------------------------
+# Global Styles
+--------------------------------------------------------------*/
 .hidden {
     display: none !important;
 }
