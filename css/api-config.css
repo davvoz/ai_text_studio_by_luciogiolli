@@ -1,0 +1,155 @@
+/* API Configuration Styles */
+
+.api-config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.provider-description {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.text-input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.text-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
+    outline: none;
+}
+
+#apiTokenField {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 42px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.toggle-password:hover {
+    color: var(--accent-color);
+}
+
+.buttons-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: space-between;
+}
+
+.secondary-btn {
+    padding: 0.75rem 1.25rem;
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+    background-color: var(--background-tertiary);
+    border-color: var(--accent-color);
+}
+
+.secondary-btn i {
+    color: var(--accent-color);
+}
+
+.current-api-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--background-secondary);
+}
+
+.api-status {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.not-configured {
+    background-color: var(--error-color);
+}
+
+.status-dot.configured {
+    background-color: var(--success-color);
+}
+
+.status-dot.connected {
+    background-color: var(--success-color);
+    box-shadow: 0 0 0 3px rgba(var(--success-color-rgb), 0.3);
+}
+
+.api-config-actions {
+    margin-bottom: 1.5rem;
+}
+
+.api-help {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--background-secondary);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.api-help p {
+    margin-bottom: 0.5rem;
+}
+
+.api-help p:last-child {
+    margin-bottom: 0;
+}
+
+.api-help a {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.api-help i {
+    color: var(--accent-color);
+    margin-right: 0.25rem;
+}

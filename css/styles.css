@@ -23,10 +23,12 @@
     --card-bg: #FFFFFF;
     --text-primary: #264653;
     --text-secondary: #546A76;
-    --border-color: #E0E0E0;
+    --border-color: #E0E0E0;    
     --hover-color: #1D6E64;
     --success-color: #2A9D8F;
+    --success-color-rgb: 42, 157, 143;
     --error-color: #E76F51;
+    --error-color-rgb: 231, 111, 81;
     
     /* Shadows */
     --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -41,6 +43,9 @@
     /* Transitions */
     --transition-fast: 0.2s ease;
     --transition-norm: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --transition-bounce: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-smooth: 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     
     /* Layout sizes */
     --main-header-height: 70px;
@@ -209,20 +214,26 @@ h1 {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 500;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-smooth);
     text-align: left;
     position: relative;
+    overflow: hidden;
 }
 
 .nav-btn i {
     margin-right: 12px;
     width: 20px;
     text-align: center;
+    transition: transform var(--transition-bounce);
 }
 
 .nav-btn:hover {
     color: var(--primary-color);
     background-color: rgba(42, 157, 143, 0.08);
+}
+
+.nav-btn:hover i {
+    transform: scale(1.2);
 }
 
 .nav-btn.active {
@@ -240,6 +251,16 @@ h1 {
     width: 4px;
     background-color: var(--primary-color);
     border-radius: 0 4px 4px 0;
+    animation: slideInBar 0.3s ease-out;
+}
+
+@keyframes slideInBar {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
 }
 
 .settings-btn {
@@ -274,11 +295,20 @@ h1 {
     display: none;
     height: 100%;
     width: 100%;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+    position: absolute;
+    pointer-events: none;
 }
 
 .tab-content.active {
     display: flex;
     flex-direction: column;
+    opacity: 1;
+    transform: translateY(0);
+    position: relative;
+    pointer-events: auto;
 }
 
 /* Cards styling */
@@ -685,14 +715,16 @@ h3 i {
     box-shadow: var(--shadow-lg);
     z-index: 50;
     transform: translateX(0);
-    transition: transform var(--transition-norm);
+    transition: transform var(--transition-smooth), opacity var(--transition-smooth);
     display: flex;
     flex-direction: column;
     border-left: 1px solid var(--border-color);
+    opacity: 1;
 }
 
 .settings-panel.hidden {
     transform: translateX(100%);
+    opacity: 0;
 }
 
 .settings-header {
@@ -723,25 +755,63 @@ h3 i {
     cursor: pointer;
     font-weight: 500;
     color: var(--text-secondary);
-    transition: all var(--transition-fast);
+    transition: all var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
 }
 
 .config-tab-btn:hover {
     color: var(--primary-color);
 }
 
+.config-tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform var(--transition-smooth);
+    transform-origin: right;
+}
+
+.config-tab-btn:hover::after {
+    transform: scaleX(0.3);
+}
+
 .config-tab-btn.active {
-    border-bottom: 2px solid var(--primary-color);
     color: var(--primary-color);
     font-weight: 600;
 }
 
+.config-tab-btn.active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
 .config-content {
     display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity var(--transition-smooth), transform var(--transition-smooth);
 }
 
 .config-content.active {
     display: block;
+    animation: fadeSlideIn 0.4s forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .prompt-config {
@@ -801,7 +871,8 @@ h4 i {
     z-index: 100;
     opacity: 1;
     visibility: visible;
-    transition: opacity var(--transition-norm), visibility var(--transition-norm);
+    transition: opacity var(--transition-smooth), visibility var(--transition-smooth);
+    
 }
 
 .modal.hidden {
@@ -817,12 +888,14 @@ h4 i {
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: var(--shadow-lg);
-    transform: translateY(0);
-    transition: transform var(--transition-norm);
+    transform: translateY(0) scale(1);
+    transition: transform var(--transition-bounce), opacity var(--transition-smooth);
+    opacity: 1;
 }
 
 .modal.hidden .modal-content {
-    transform: translateY(20px);
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
 }
 
 .modal-header {
@@ -860,10 +933,9 @@ h4 i {
     box-shadow: var(--shadow-md);
     display: flex;
     align-items: center;
-    opacity: 0;
-    transform: translateX(100%);
-    transition: opacity 0.3s ease, transform 0.3s ease;
     border-left: 4px solid var(--primary-color);
+    transform: translateX(100%);
+    opacity: 0;
 }
 
 .notification i {

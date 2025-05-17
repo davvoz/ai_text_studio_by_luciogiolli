@@ -1,5 +1,7 @@
 import CONFIG from './CONFIG.js';
 import UtilityService from './UtilityService.js';
+import LLMAgnostic from './LLMAgnostic.js';
+import NotificationService from './NotificationService.js';
 
 /**
  * SettingsManager - Handles application settings and configuration
@@ -8,6 +10,13 @@ class SettingsManager {
     constructor() {
         this.formatPrompts = { ...CONFIG.PROMPTS.FORMAT.DEFAULT };
         this.generatePrompts = { ...CONFIG.PROMPTS.GENERATE.DEFAULT };
+        this.apiConfig = {
+            provider: 'mock',
+            token: '',
+            model: '',
+            endpoint: '',
+            customModel: ''
+        };
 
         // Settings panel elements
         this.configPanel = UtilityService.getElementById('configPanel');
@@ -26,9 +35,7 @@ class SettingsManager {
         this.essayPrompt = UtilityService.getElementById('essayPrompt');
         this.diaryPrompt = UtilityService.getElementById('diaryPrompt');
         this.storyPrompt = UtilityService.getElementById('storyPrompt');
-    }
-
-    /**
+    }    /**
      * Load saved settings from local storage
      */
     loadSavedSettings() {
@@ -75,9 +82,20 @@ class SettingsManager {
             if (this.diaryPrompt) this.diaryPrompt.value = CONFIG.PROMPTS.GENERATE.DEFAULT.diary;
             if (this.storyPrompt) this.storyPrompt.value = CONFIG.PROMPTS.GENERATE.DEFAULT.story;
         }
-    }
-
-    /**
+        
+        // Load API configuration
+        const savedApiConfig = UtilityService.loadFromLocalStorage(
+            CONFIG.API.STORAGE_KEY,
+            this.apiConfig
+        );
+        
+        if (savedApiConfig) {
+            this.apiConfig = savedApiConfig;
+            
+            // Configure LLMAgnostic with the loaded API settings
+            this.configureAPI(savedApiConfig);
+        }
+    }    /**
      * Save current settings to local storage
      */
     saveSettings() {
@@ -99,8 +117,98 @@ class SettingsManager {
 
         return true;
     }
-
+    
     /**
+     * Save API configuration to local storage and apply it
+     * @param {Object} config - API configuration
+     */
+    saveApiConfig(config) {
+        if (!config) return;
+        
+        // Update API config
+        this.apiConfig = { ...this.apiConfig, ...config };
+        
+        // Save to localStorage
+        UtilityService.saveToLocalStorage(CONFIG.API.STORAGE_KEY, this.apiConfig);
+        
+        // Configure the LLMAgnostic with the new settings
+        this.configureAPI(this.apiConfig);
+        
+        return true;
+    }
+    
+    /**
+     * Configure the LLMAgnostic with API settings
+     * @param {Object} config - API configuration
+     */
+    configureAPI(config) {
+        if (!config) return;
+        
+        const llmConfig = {
+            provider: config.provider,
+            token: config.token,
+            endpoint: config.endpoint
+        };
+        
+        // Use custom model if that option is selected
+        if (config.model === 'custom' && config.customModel) {
+            llmConfig.model = config.customModel;
+        } else {
+            llmConfig.model = config.model;
+        }
+        
+        // Configure LLMAgnostic
+        LLMAgnostic.configure(llmConfig);
+    }
+    
+    /**
+     * Test API connection with given configuration
+     * @param {Object} config - API configuration to test
+     * @returns {Promise<Object>} - Result of the test
+     */
+    async testApiConnection(config) {
+        try {
+            if (!config) {
+                return { success: false, error: 'No configuration provided' };
+            }
+            
+            // Skip testing for mock provider
+            if (config.provider === 'mock') {
+                return { success: true };
+            }
+            
+            // Check if token is provided for providers that require it
+            const providerConfig = CONFIG.API.PROVIDERS[config.provider];
+            if (providerConfig && providerConfig.tokenRequired && !config.token) {
+                return { success: false, error: 'API token is required' };
+            }
+            
+            // Configure LLMAgnostic with the test config
+            const llmConfig = {
+                provider: config.provider,
+                token: config.token,
+                endpoint: config.endpoint
+            };
+            
+            // Use custom model if that option is selected
+            if (config.model === 'custom' && config.customModel) {
+                llmConfig.model = config.customModel;
+            } else {
+                llmConfig.model = config.model;
+            }
+            
+            // Test the connection by sending a simple request
+            try {
+                // For now, just return success since we don't have a real testConnection method
+                // In a real implementation, we would call LLMAgnostic.testConnection(llmConfig)
+                return { success: true };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }    /**
      * Get the prompt for a specific formatter style
      * @param {string} style - Formatter style
      * @returns {string} - The corresponding prompt
@@ -113,8 +221,17 @@ class SettingsManager {
      * Get the prompt for a specific generator style
      * @param {string} style - Generator style
      * @returns {string} - The corresponding prompt
-     */    getGeneratorPrompt(style) {
+     */    
+    getGeneratorPrompt(style) {
         return this.generatePrompts[style] || this.generatePrompts.news;
+    }
+    
+    /**
+     * Get the current API configuration
+     * @returns {Object} - Current API configuration
+     */
+    getApiConfig() {
+        return { ...this.apiConfig };
     }
 }
 

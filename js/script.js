@@ -22,19 +22,29 @@ function initializeApplication() {
         
         // Initialize theme manager
         const themeManager = new ThemeManager();
-        
-        // Initialize UI controller
+          // Initialize UI controller
         const uiController = new UIController();
         uiController.hideLoader();
         uiController.setupThemeToggle(themeManager);
         uiController.setupNavigation();
         uiController.setupAboutModal();
-        uiController.animateCards();
         
         // Initialize settings manager
         const settingsManager = new SettingsManager();
         settingsManager.loadSavedSettings();
         uiController.setupSettingsPanel(settingsManager);
+        
+        // Initialize API config modal
+        uiController.setupApiConfigModal(settingsManager);
+        
+        // Update API info display
+        uiController.updateApiInfoDisplay(settingsManager.getApiConfig());
+        
+        // Load API config into form
+        uiController.loadApiConfigIntoForm(settingsManager.getApiConfig());
+        
+        // Animate cards
+        uiController.animateCards();
         
         // Initialize output manager
         const outputManager = new OutputManager(notificationService);

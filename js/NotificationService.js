@@ -40,11 +40,8 @@ class NotificationService {
         this.container.appendChild(notification);
         this.activeNotifications.push(notification);
 
-        // Animation
-        setTimeout(() => {
-            notification.style.opacity = '1';
-            notification.style.transform = 'translateX(0)';
-        }, 10);
+        // No need to set style directly, animation is handled by CSS
+        // Animation will run automatically based on the CSS in animations.css
 
         // Auto remove after 5 seconds
         setTimeout(() => {
@@ -58,8 +55,8 @@ class NotificationService {
      */
     removeNotification(notification) {
         if (notification && notification.parentNode) {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
+            // Add removing class to trigger slide-out animation
+            notification.classList.add('removing');
 
             // Remove from DOM after animation completes
             setTimeout(() => {
@@ -71,7 +68,7 @@ class NotificationService {
                 if (index > -1) {
                     this.activeNotifications.splice(index, 1);
                 }
-            }, 300);
+            }, 500); // Match with animation duration
         }
     }
 

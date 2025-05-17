@@ -1,5 +1,6 @@
 import UtilityService from "./UtilityService.js";
 import CONFIG from "./CONFIG.js";
+import LLMAgnostic from "./LLMAgnostic.js";
 /**
  * GeneratorService - Handles text generation functionality
  */

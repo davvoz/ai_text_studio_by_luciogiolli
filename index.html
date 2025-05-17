@@ -6,12 +6,13 @@
     <title>AI Text Studio | Create, Transform, Innovate</title>
     <meta name="theme-color" content="#2A9D8F">
     <meta name="msapplication-navbutton-color" content="#2A9D8F">
-    <meta name="msapplication-TileColor" content="#2A9D8F">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#2A9D8F">
-    <link rel="mask-icon" href="favicon.svg" color="#2A9D8F">
-    <meta name="color-scheme" content="light dark">
+    <meta name="msapplication-TileColor" content="#2A9D8F">    <meta name="apple-mobile-web-app-status-bar-style" content="#2A9D8F">
+    <link rel="mask-icon" href="favicon.svg" color="#2A9D8F">    <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/custom-language.css">
+    <link rel="stylesheet" href="css/api-config.css">
+    <link rel="stylesheet" href="css/modal-transitions.css">
+    <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +22,7 @@
     <div class="container">
         <header>
             <div class="logo-container">
-                <img src="app_icon.jpeg" alt="AI Text Studio" class="logo">
+                <img src="assets/app_icon.jpeg" alt="AI Text Studio" class="logo">
                 <div class="title-container">
                     <h1>AI Text Studio</h1>
                     <p class="tagline">Create, Transform, Innovate</p>
@@ -153,10 +154,10 @@
                         <button id="closeSettings" class="icon-btn" title="Close panel"><i class="fas fa-times"></i></button>
                     </div>
                     
-                    <div class="settings-content">
-                        <div class="config-tabs">
+                    <div class="settings-content">                        <div class="config-tabs">
                             <button class="config-tab-btn active" data-tab="formatConfig">Formatting Prompts</button>
                             <button class="config-tab-btn" data-tab="genConfig">Generation Prompts</button>
+                            <button class="config-tab-btn" data-tab="apiConfig">API Settings</button>
                         </div>
                         
                         <div id="formatConfig" class="config-content active">
@@ -206,8 +207,38 @@
                                 <div class="config-group">
                                     <h4><i class="fas fa-feather"></i> Story Prompt:</h4>
                                     <label for="storyPrompt" class="sr-only">Prompt for Story generation</label>
-                                    <textarea id="storyPrompt" class="config-prompt"></textarea>
+                                    <textarea id="storyPrompt" class="config-prompt"></textarea>                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="apiConfig" class="config-content">
+                            <h3>API Configuration</h3>
+                            <div class="current-api-info">
+                                <div class="api-status">
+                                    <h4>Current Status:</h4>
+                                    <div class="status-indicator">
+                                        <span id="apiStatusIndicator" class="status-dot not-configured"></span>
+                                        <span id="apiStatusText">Not Configured</span>
+                                    </div>
                                 </div>
+                                <div class="api-provider-info">
+                                    <h4>Provider:</h4>
+                                    <p id="currentProviderName">Demo Mode (No API)</p>
+                                </div>
+                                <div class="api-model-info">
+                                    <h4>Model:</h4>
+                                    <p id="currentModelName">None</p>
+                                </div>
+                            </div>
+                            <div class="api-config-actions">
+                                <button id="openApiConfig" class="secondary-btn">
+                                    <i class="fas fa-cog"></i> Configure API
+                                </button>
+                            </div>
+                            <div class="api-help">
+                                <p><i class="fas fa-info-circle"></i> Configure your preferred AI provider to enhance text generation and formatting capabilities.</p>
+                                <p><i class="fas fa-lightbulb"></i> Tip: For Hugging Face, you can get a token from your
+                                <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener">Hugging Face account settings</a>.</p>
                             </div>
                         </div>
                         
@@ -220,9 +251,7 @@
         <footer>
             <p>AI Text Studio &copy; 2023-2025 by Lucio Giolli | <a href="#" id="aboutLink">About</a></p>
         </footer>
-    </div>
-
-    <!-- About Modal -->
+    </div>    <!-- About Modal -->
     <div id="aboutModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -232,6 +261,70 @@
             <div class="modal-body">
                 <p>AI Text Studio is a powerful tool for generating and formatting texts using artificial intelligence. Whether you need to create blog posts, news articles, essays, or social media content, AI Text Studio has you covered.</p>
                 <p>Developed by Lucio Giolli, this application combines cutting-edge AI technology with an intuitive user interface to make content creation easier than ever.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Configuration Modal -->
+    <div id="apiConfigModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plug"></i> API Configuration</h2>
+                <button id="closeApiModal" class="icon-btn" title="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="api-config-form">
+                    <div class="config-group">
+                        <h4><i class="fas fa-server"></i> API Provider:</h4>
+                        <label for="apiProviderSelect" class="sr-only">Select API Provider</label>
+                        <select id="apiProviderSelect" class="select-control">
+                            <option value="mock">Demo Mode (No API)</option>
+                            <option value="huggingface">Hugging Face</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="azure">Azure OpenAI</option>
+                            <option value="anthropic">Anthropic Claude</option>
+                        </select>
+                        <p class="provider-description" id="providerDescription">Uses pre-defined mock responses for demonstration purposes.</p>
+                    </div>
+                    
+                    <div id="apiTokenField" class="config-group">
+                        <h4><i class="fas fa-key"></i> API Token/Key:</h4>
+                        <label for="apiTokenInput" class="sr-only">API Token or Key</label>
+                        <input type="password" id="apiTokenInput" class="text-input" placeholder="Enter your API token/key" />
+                        <button id="toggleToken" class="toggle-password" title="Show/hide token">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="apiModelField" class="config-group">
+                        <h4><i class="fas fa-robot"></i> Model:</h4>
+                        <label for="apiModelSelect" class="sr-only">Select Model</label>
+                        <select id="apiModelSelect" class="select-control">
+                            <!-- Filled dynamically based on provider -->
+                        </select>
+                    </div>
+                    
+                    <div id="apiCustomModelField" class="config-group hidden">
+                        <h4><i class="fas fa-code"></i> Custom Model ID:</h4>
+                        <label for="apiCustomModelInput" class="sr-only">Custom Model ID</label>
+                        <input type="text" id="apiCustomModelInput" class="text-input" placeholder="Enter custom model ID (e.g., your-org/your-model)" />
+                    </div>
+                    
+                    <div id="apiEndpointField" class="config-group hidden">
+                        <h4><i class="fas fa-link"></i> Custom Endpoint URL:</h4>
+                        <label for="apiEndpointInput" class="sr-only">Custom Endpoint URL</label>
+                        <input type="text" id="apiEndpointInput" class="text-input" placeholder="Enter custom endpoint URL (optional)" />
+                    </div>
+                    
+                    <div class="buttons-container">
+                        <button id="testApiConnection" class="secondary-btn">
+                            <i class="fas fa-vial"></i> Test Connection
+                        </button>
+                        <button id="saveApiConfig" class="action-btn">
+                            <i class="fas fa-save"></i> Save Configuration
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

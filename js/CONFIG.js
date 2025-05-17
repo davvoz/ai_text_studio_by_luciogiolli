@@ -14,6 +14,61 @@ const CONFIG = {
     ABOUT: {
         STORAGE_KEY: 'textStudioAboutOpen'
     },
+    API: {
+        STORAGE_KEY: 'textStudioAPIConfig',
+        PROVIDERS: {
+            'mock': {
+                name: 'Demo Mode (No API)',
+                description: 'Uses pre-defined mock responses for demonstration purposes.',
+                tokenRequired: false,
+                endpointRequired: false,
+                modelOptions: []
+            },
+            'huggingface': {
+                name: 'Hugging Face',
+                description: 'Connect to Hugging Face\'s Inference API with your token.',
+                tokenRequired: true,
+                endpointRequired: false,
+                modelOptions: [
+                    { value: 'mistralai/Mistral-7B-Instruct-v0.2', name: 'Mistral 7B Instruct' },
+                    { value: 'meta-llama/Llama-2-7b-chat-hf', name: 'Meta Llama 2 7B Chat' },
+                    { value: 'tiiuae/falcon-7b-instruct', name: 'Falcon 7B Instruct' },
+                    { value: 'gpt2', name: 'GPT-2' },
+                    { value: 'custom', name: 'Custom Model' }
+                ]
+            },
+            'openai': {
+                name: 'OpenAI',
+                description: 'Access to OpenAI\'s models like GPT-3.5 and GPT-4.',
+                tokenRequired: true,
+                endpointRequired: false,
+                modelOptions: [
+                    { value: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
+                    { value: 'gpt-4', name: 'GPT-4' },
+                    { value: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
+                ]
+            },
+            'azure': {
+                name: 'Azure OpenAI',
+                description: 'Microsoft Azure\'s OpenAI service with your own deployment.',
+                tokenRequired: true,
+                endpointRequired: true,
+                modelOptions: [
+                    { value: 'your-deployment-name', name: 'Your Azure OpenAI Deployment' }
+                ]
+            },
+            'anthropic': {
+                name: 'Anthropic Claude',
+                description: 'Anthropic\'s Claude models for text generation.',
+                tokenRequired: true,
+                endpointRequired: false,
+                modelOptions: [
+                    { value: 'claude-2', name: 'Claude 2' },
+                    { value: 'claude-instant-1', name: 'Claude Instant' }
+                ]
+            }
+        }
+    },
     PROMPTS: {
         FORMAT: {
             STORAGE_KEY: 'textFormatterPrompts',
@@ -51,3 +106,4 @@ const CONFIG = {
 };
 
 export default CONFIG;
+ 

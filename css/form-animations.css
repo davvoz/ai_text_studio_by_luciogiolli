@@ -1,0 +1,154 @@
+/* Form input animations */
+
+/* Input field focus animations */
+.input-field,
+.select-control,
+textarea {
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--transition-norm), 
+                box-shadow var(--transition-norm),
+                transform var(--transition-fast);
+}
+
+.input-field:focus-within,
+.select-control:focus,
+textarea:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom select dropdown animation */
+.select-control {
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.select-control:hover {
+    border-color: var(--primary-color);
+}
+
+.select-control::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: transform var(--transition-norm);
+}
+
+.select-control:focus::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Checkbox animations */
+.checkbox-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-checkmark {
+    position: relative;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-norm);
+    overflow: hidden;
+}
+
+.checkbox-container:hover .checkbox-checkmark {
+    border-color: var(--primary-color);
+    background-color: rgba(42, 157, 143, 0.05);
+}
+
+.checkbox-container input:checked ~ .checkbox-checkmark {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform var(--transition-bounce);
+}
+
+.checkbox-container input:checked ~ .checkbox-checkmark:after {
+    display: block;
+    transform: rotate(45deg) scale(1);
+}
+
+/* Radio button animations */
+.radio-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.radio-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.radio-mark {
+    position: relative;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    transition: all var(--transition-norm);
+}
+
+.radio-container:hover .radio-mark {
+    border-color: var(--primary-color);
+    background-color: rgba(42, 157, 143, 0.05);
+}
+
+.radio-container input:checked ~ .radio-mark {
+    border-color: var(--primary-color);
+}
+
+.radio-mark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    transform: scale(0);
+    transition: transform var(--transition-bounce);
+}
+
+.radio-container input:checked ~ .radio-mark:after {
+    display: block;
+    transform: scale(1);
+}
