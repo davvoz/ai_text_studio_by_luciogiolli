@@ -1,0 +1,95 @@
+/* Token Generation Button Styles */
+
+.token-button-container {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.token-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all var(--transition-norm);
+    box-shadow: var(--shadow-sm);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.token-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    border-radius: var(--radius-sm);
+    transition: opacity var(--transition-norm);
+}
+
+.token-btn:hover {
+    background-color: var(--hover-color);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.token-btn:hover::after {
+    opacity: 1;
+    animation: pulse 1.5s infinite;
+}
+
+.token-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.token-btn i {
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+/* Animation for the pulse effect */
+@keyframes pulse {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Fix for dark theme */
+.dark-theme .token-btn {
+    color: white;
+}
+
+#tokenHelpText {
+    line-height: 1.6;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+/* Add responsive styling */
+@media (max-width: 768px) {
+    .token-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .token-btn i {
+        font-size: 0.9rem;
+    }
+}

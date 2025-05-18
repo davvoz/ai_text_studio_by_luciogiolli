@@ -16,15 +16,14 @@ const CONFIG = {
     },
     API: {
         STORAGE_KEY: 'textStudioAPIConfig',
-        PROVIDERS: {
-            'mock': {
+        PROVIDERS: {            'mock': {
                 name: 'Demo Mode (No API)',
                 description: 'Uses pre-defined mock responses for demonstration purposes.',
                 tokenRequired: false,
                 endpointRequired: false,
-                modelOptions: []
-            },
-            'huggingface': {
+                modelOptions: [],
+                tokenUrl: ''
+            },            'huggingface': {
                 name: 'Hugging Face',
                 description: 'Connect to Hugging Face\'s Inference API with your token.',
                 tokenRequired: true,
@@ -33,10 +32,37 @@ const CONFIG = {
                     { value: 'mistralai/Mistral-7B-Instruct-v0.2', name: 'Mistral 7B Instruct' },
                     { value: 'meta-llama/Llama-2-7b-chat-hf', name: 'Meta Llama 2 7B Chat' },
                     { value: 'tiiuae/falcon-7b-instruct', name: 'Falcon 7B Instruct' },
+                    { value: 'google/gemma-7b-it', name: 'Google Gemma 7B' },
+                    { value: 'microsoft/phi-2', name: 'Microsoft Phi-2' },
+                    { value: 'TinyLlama/TinyLlama-1.1B-Chat-v1.0', name: 'TinyLlama Chat 1.1B' },
+                    { value: 'stabilityai/stablelm-3b-4e1t', name: 'StableLM 3B' },
+                    { value: 'HuggingFaceH4/zephyr-7b-beta', name: 'Zephyr 7B' },
+                    { value: 'TheBloke/Mixtral-8x7B-Instruct-v0.1-GPTQ', name: 'Mixtral 8x7B Instruct' },
+                    { value: 'mosaicml/mpt-7b-instruct', name: 'MPT 7B Instruct' },
                     { value: 'gpt2', name: 'GPT-2' },
                     { value: 'custom', name: 'Custom Model' }
-                ]
+                ],
+                tokenUrl: 'https://huggingface.co/settings/tokens',
+                tokenTip: 'Per Hugging Face: utilizza un token di <strong>INFERENZA API</strong>, non un token di accesso utente standard.'
             },
+            'github': {
+                name: 'GitHub Models',
+                description: 'Access GitHub\'s AI models through their API.',
+                tokenRequired: true,
+                endpointRequired: false,
+                modelOptions: [
+                    { value: 'openai/gpt-4o-mini', name: 'GPT-4o Mini' },
+                    { value: 'openai/gpt-4', name: 'GPT-4' },
+                    { value: 'openai/gpt-4o', name: 'GPT-4o' },
+                    { value: 'openai/gpt-4-turbo', name: 'GPT-4 Turbo' },
+                    { value: 'llama-3/meta-llama-3-8b', name: 'Meta Llama 3 (8B)' },
+                    { value: 'llama-3/meta-llama-3-70b', name: 'Meta Llama 3 (70B)' },
+                    { value: 'mistral/mistral-small', name: 'Mistral Small' },
+                    { value: 'custom', name: 'Custom Model' }
+                ],
+                tokenUrl: 'https://github.com/settings/tokens',
+                tokenTip: 'Per GitHub Models: crea un token con i permessi appropriati nella pagina delle impostazioni del tuo account GitHub.'
+            },            
             'openai': {
                 name: 'OpenAI',
                 description: 'Access to OpenAI\'s models like GPT-3.5 and GPT-4.',
@@ -46,7 +72,9 @@ const CONFIG = {
                     { value: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
                     { value: 'gpt-4', name: 'GPT-4' },
                     { value: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
-                ]
+                ],
+                tokenUrl: 'https://platform.openai.com/api-keys',
+                tokenTip: 'Per OpenAI: crea una nuova chiave API nella dashboard di OpenAI.'
             },
             'azure': {
                 name: 'Azure OpenAI',
@@ -55,7 +83,9 @@ const CONFIG = {
                 endpointRequired: true,
                 modelOptions: [
                     { value: 'your-deployment-name', name: 'Your Azure OpenAI Deployment' }
-                ]
+                ],
+                tokenUrl: 'https://portal.azure.com/#blade/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/OpenAI',
+                tokenTip: 'Per Azure OpenAI: trova la tua API key nel portale Azure sotto le risorse di Azure OpenAI.'
             },
             'anthropic': {
                 name: 'Anthropic Claude',
@@ -65,7 +95,9 @@ const CONFIG = {
                 modelOptions: [
                     { value: 'claude-2', name: 'Claude 2' },
                     { value: 'claude-instant-1', name: 'Claude Instant' }
-                ]
+                ],
+                tokenUrl: 'https://console.anthropic.com/keys',
+                tokenTip: 'Per Anthropic: genera una nuova API key dalla console di Anthropic.'
             }
         }
     },
@@ -106,4 +138,3 @@ const CONFIG = {
 };
 
 export default CONFIG;
- 

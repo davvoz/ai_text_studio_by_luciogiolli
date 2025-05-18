@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Initialize all application components
  */
-function initializeApplication() {
-    try {
+function initializeApplication() {    try {
         // Initialize utility services
         const notificationService = new NotificationService();
+        // Make notificationService available globally for error handling
+        window.notificationService = notificationService;
         
         // Initialize theme manager
         const themeManager = new ThemeManager();

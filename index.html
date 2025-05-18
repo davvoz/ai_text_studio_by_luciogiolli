@@ -7,12 +7,14 @@
     <meta name="theme-color" content="#2A9D8F">
     <meta name="msapplication-navbutton-color" content="#2A9D8F">
     <meta name="msapplication-TileColor" content="#2A9D8F">    <meta name="apple-mobile-web-app-status-bar-style" content="#2A9D8F">
-    <link rel="mask-icon" href="favicon.svg" color="#2A9D8F">    <meta name="color-scheme" content="light dark">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="mask-icon" href="favicon.svg" color="#2A9D8F">    <meta name="color-scheme" content="light dark">    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/custom-language.css">
     <link rel="stylesheet" href="css/api-config.css">
+    <link rel="stylesheet" href="css/token-button.css">
+    <link rel="stylesheet" href="css/api-error.css">
     <link rel="stylesheet" href="css/modal-transitions.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/refresh-button.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -210,35 +212,36 @@
                                     <textarea id="storyPrompt" class="config-prompt"></textarea>                                </div>
                             </div>
                         </div>
-                        
-                        <div id="apiConfig" class="config-content">
+                          <div id="apiConfig" class="config-content">
                             <h3>API Configuration</h3>
                             <div class="current-api-info">
                                 <div class="api-status">
-                                    <h4>Current Status:</h4>
+                                    <h4><i class="fas fa-plug"></i> Current Status:</h4>
                                     <div class="status-indicator">
                                         <span id="apiStatusIndicator" class="status-dot not-configured"></span>
                                         <span id="apiStatusText">Not Configured</span>
                                     </div>
                                 </div>
-                                <div class="api-provider-info">
-                                    <h4>Provider:</h4>
-                                    <p id="currentProviderName">Demo Mode (No API)</p>
-                                </div>
-                                <div class="api-model-info">
-                                    <h4>Model:</h4>
-                                    <p id="currentModelName">None</p>
+                                <div class="api-info-grid">
+                                    <div class="api-provider-info">
+                                        <h4><i class="fas fa-server"></i> Provider</h4>
+                                        <p id="currentProviderName">Demo Mode (No API)</p>
+                                    </div>
+                                    <div class="api-model-info">
+                                        <h4><i class="fas fa-robot"></i> Model</h4>
+                                        <p id="currentModelName">None</p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="api-config-actions">
                                 <button id="openApiConfig" class="secondary-btn">
                                     <i class="fas fa-cog"></i> Configure API
                                 </button>
-                            </div>
-                            <div class="api-help">
+                            </div>                            <div class="api-help">
                                 <p><i class="fas fa-info-circle"></i> Configure your preferred AI provider to enhance text generation and formatting capabilities.</p>
-                                <p><i class="fas fa-lightbulb"></i> Tip: For Hugging Face, you can get a token from your
-                                <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener">Hugging Face account settings</a>.</p>
+                                <p><i class="fas fa-key"></i> To configure your API settings and obtain tokens, click on the "<i class="fas fa-cog"></i> Configure API" button above.</p>
+                                <p><i class="fas fa-lightbulb"></i> When using Hugging Face models, note that not all models might be available for inference API. If a model doesn't work, try using one of the popular models like Mistral-7B-Instruct or TinyLlama.</p>
+                                <p><i class="fas fa-exclamation-circle"></i> Custom Model option allows you to specify any model ID in the format "owner/model-name".</p>
                             </div>
                         </div>
                         
@@ -276,24 +279,22 @@
                 <div class="api-config-form">
                     <div class="config-group">
                         <h4><i class="fas fa-server"></i> API Provider:</h4>
-                        <label for="apiProviderSelect" class="sr-only">Select API Provider</label>
-                        <select id="apiProviderSelect" class="select-control">
+                        <label for="apiProviderSelect" class="sr-only">Select API Provider</label>                        <select id="apiProviderSelect" class="select-control">
                             <option value="mock">Demo Mode (No API)</option>
                             <option value="huggingface">Hugging Face</option>
+                            <option value="github">GitHub Models</option>
                             <option value="openai">OpenAI</option>
                             <option value="azure">Azure OpenAI</option>
                             <option value="anthropic">Anthropic Claude</option>
                         </select>
                         <p class="provider-description" id="providerDescription">Uses pre-defined mock responses for demonstration purposes.</p>
                     </div>
-                    
-                    <div id="apiTokenField" class="config-group">
-                        <h4><i class="fas fa-key"></i> API Token/Key:</h4>
+                      <div id="apiTokenField" class="config-group">                        <h4><i class="fas fa-key"></i> API Token/Key:</h4>
                         <label for="apiTokenInput" class="sr-only">API Token or Key</label>
-                        <input type="password" id="apiTokenInput" class="text-input" placeholder="Enter your API token/key" />
-                        <button id="toggleToken" class="toggle-password" title="Show/hide token">
+                        <input type="password" id="apiTokenInput" class="text-input" placeholder="Enter your API token/key" />                        <button id="toggleToken" class="toggle-password" title="Show/hide token">
                             <i class="fas fa-eye"></i>
                         </button>
+                        <p id="tokenHelpText" class="help-text"></p>
                     </div>
                     
                     <div id="apiModelField" class="config-group">
@@ -302,6 +303,9 @@
                         <select id="apiModelSelect" class="select-control">
                             <!-- Filled dynamically based on provider -->
                         </select>
+                        <div id="refreshModelsContainer" class="hidden">
+                            <button id="refreshModels" class="refresh-btn" title="Refresh models"><i class="fas fa-sync-alt"></i> Aggiorna modelli</button>
+                        </div>
                     </div>
                     
                     <div id="apiCustomModelField" class="config-group hidden">
@@ -314,9 +318,7 @@
                         <h4><i class="fas fa-link"></i> Custom Endpoint URL:</h4>
                         <label for="apiEndpointInput" class="sr-only">Custom Endpoint URL</label>
                         <input type="text" id="apiEndpointInput" class="text-input" placeholder="Enter custom endpoint URL (optional)" />
-                    </div>
-                    
-                    <div class="buttons-container">
+                    </div>                    <div class="buttons-container">
                         <button id="testApiConnection" class="secondary-btn">
                             <i class="fas fa-vial"></i> Test Connection
                         </button>

@@ -6,6 +6,37 @@
     gap: 1.5rem;
 }
 
+/* Status Indicator Pulse Animations */
+@keyframes pulse-error {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+    70% {
+        transform: scale(1.1);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+}
+
+@keyframes pulse-success {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+    70% {
+        transform: scale(1.1);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+}
+
 .provider-description {
     margin-top: 0.5rem;
     font-size: 0.9rem;
@@ -81,41 +112,80 @@
 }
 
 .current-api-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
     margin-bottom: 1.5rem;
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 1.5rem;
+    border-radius: 12px;
     background-color: var(--background-secondary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--accent-color);
 }
 
 .api-status {
-    grid-column: 1 / -1;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.api-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
 }
 
 .status-indicator {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    background-color: rgba(var(--background-tertiary-rgb), 0.5);
+    transition: all 0.3s ease;
 }
 
 .status-dot {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     display: inline-block;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.status-dot::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: 50%;
+    z-index: 0;
+    opacity: 0.4;
 }
 
 .status-dot.not-configured {
     background-color: var(--error-color);
 }
 
+.status-dot.not-configured::after {
+    border: 2px solid var(--error-color);
+    animation: pulse-error 2s infinite;
+}
+
 .status-dot.configured {
     background-color: var(--success-color);
+}
+
+.status-dot.configured::after {
+    border: 2px solid var(--success-color);
+    animation: pulse-success 2s infinite;
 }
 
 .status-dot.connected {
@@ -123,21 +193,80 @@
     box-shadow: 0 0 0 3px rgba(var(--success-color-rgb), 0.3);
 }
 
+.status-dot.connected::after {
+    border: 2px solid var(--success-color);
+    animation: pulse-success 2s infinite;
+}
+
+.api-provider-info, .api-model-info {
+    padding: 1rem;
+    background-color: rgba(var(--background-tertiary-rgb), 0.3);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.api-provider-info:hover, .api-model-info:hover {
+    background-color: rgba(var(--background-tertiary-rgb), 0.5);
+    transform: translateY(-2px);
+}
+
+.api-provider-info h4, .api-model-info h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.api-provider-info p, .api-model-info p {
+    font-weight: 500;
+    padding: 0.4rem 0;
+}
+
 .api-config-actions {
     margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.api-config-actions .secondary-btn {
+    padding: 0.85rem 2rem;
+    background: linear-gradient(to right, var(--background-secondary), rgba(var(--accent-color-rgb), 0.1));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.api-config-actions .secondary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to right, var(--background-secondary), rgba(var(--accent-color-rgb), 0.2));
+}
+
+.api-config-actions .secondary-btn i {
+    color: var(--accent-color);
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
 }
 
 .api-help {
     margin-top: 1.5rem;
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 1.5rem;
+    border-radius: 12px;
     background-color: var(--background-secondary);
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid rgba(var(--accent-color-rgb), 0.5);
 }
 
 .api-help p {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.6;
 }
 
 .api-help p:last-child {
@@ -147,9 +276,17 @@
 .api-help a {
     color: var(--accent-color);
     text-decoration: underline;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.api-help a:hover {
+    color: var(--accent-color-darker);
 }
 
 .api-help i {
     color: var(--accent-color);
-    margin-right: 0.25rem;
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+    margin-top: 0.2rem;
 }

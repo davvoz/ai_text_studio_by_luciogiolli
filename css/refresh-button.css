@@ -1,0 +1,47 @@
+.refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.refresh-btn:hover {
+    background: var(--accent-hover);
+}
+
+.refresh-btn:active {
+    transform: scale(0.98);
+}
+
+.refresh-btn i {
+    margin-right: 5px;
+}
+
+.refresh-btn.loading i {
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#refreshModelsContainer {
+    margin-top: 5px;
+}
+
+#refreshModelsContainer.hidden {
+    display: none;
+}

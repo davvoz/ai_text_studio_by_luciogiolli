@@ -121,9 +121,13 @@ class SettingsManager {
     /**
      * Save API configuration to local storage and apply it
      * @param {Object} config - API configuration
-     */
-    saveApiConfig(config) {
+     */    saveApiConfig(config) {
         if (!config) return;
+        
+        // Ensure the token is trimmed to prevent whitespace issues
+        if (config.token) {
+            config.token = config.token.trim();
+        }
         
         // Update API config
         this.apiConfig = { ...this.apiConfig, ...config };
@@ -140,13 +144,12 @@ class SettingsManager {
     /**
      * Configure the LLMAgnostic with API settings
      * @param {Object} config - API configuration
-     */
-    configureAPI(config) {
+     */    configureAPI(config) {
         if (!config) return;
         
         const llmConfig = {
             provider: config.provider,
-            token: config.token,
+            token: config.token ? config.token.trim() : '',
             endpoint: config.endpoint
         };
         
@@ -181,12 +184,10 @@ class SettingsManager {
             const providerConfig = CONFIG.API.PROVIDERS[config.provider];
             if (providerConfig && providerConfig.tokenRequired && !config.token) {
                 return { success: false, error: 'API token is required' };
-            }
-            
-            // Configure LLMAgnostic with the test config
+            }            // Configure LLMAgnostic with the test config
             const llmConfig = {
                 provider: config.provider,
-                token: config.token,
+                token: config.token ? config.token.trim() : '',
                 endpoint: config.endpoint
             };
             
@@ -196,12 +197,16 @@ class SettingsManager {
             } else {
                 llmConfig.model = config.model;
             }
-            
-            // Test the connection by sending a simple request
+              // Test the connection by sending a simple request
             try {
-                // For now, just return success since we don't have a real testConnection method
-                // In a real implementation, we would call LLMAgnostic.testConnection(llmConfig)
-                return { success: true };
+                // Per GitHub, usa un metodo specifico per testare la connessione
+                if (config.provider === 'github') {
+                    return await LLMAgnostic.testGitHubConnection(llmConfig.token);
+                }
+                
+                // Per altri provider, usa il metodo standard
+                const testResult = await LLMAgnostic.testConnection(llmConfig);
+                return testResult;
             } catch (error) {
                 return { success: false, error: error.message };
             }

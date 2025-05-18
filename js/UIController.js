@@ -1,6 +1,7 @@
 import UtilityService  from './UtilityService.js';
 import CONFIG from './CONFIG.js';
 import NotificationService from './NotificationService.js';
+import LLMAgnostic from './LLMAgnostic.js';
 
 /**
  * UIController - Handles all UI interactions and state
@@ -41,6 +42,10 @@ class UIController {
         this.apiStatusText = UtilityService.getElementById('apiStatusText');
         this.currentProviderName = UtilityService.getElementById('currentProviderName');
         this.currentModelName = UtilityService.getElementById('currentModelName');
+        
+        // Elementi per la gestione dei modelli GitHub
+        this.refreshModelsContainer = UtilityService.getElementById('refreshModelsContainer');
+        this.refreshModels = UtilityService.getElementById('refreshModels');
     }
 
     /**
@@ -341,6 +346,19 @@ class UIController {
             }
         });
         
+        // Refresh models button for GitHub provider
+        if (this.refreshModels) {
+            this.refreshModels.addEventListener('click', async () => {
+                if (this.apiProviderSelect && this.apiProviderSelect.value === 'github' && 
+                    this.apiTokenInput && this.apiTokenInput.value.trim()) {
+                    await this.loadDynamicGitHubModels(this.apiTokenInput.value.trim());
+                } else {
+                    const notificationService = new NotificationService();
+                    notificationService.showNotification('Seleziona GitHub come provider e inserisci un token valido', 'warning');
+                }
+            });
+        }
+        
         // Toggle token visibility
         if (this.toggleToken && this.apiTokenInput) {
             this.toggleToken.addEventListener('click', () => {
@@ -357,16 +375,138 @@ class UIController {
             this.apiProviderSelect.addEventListener('change', () => {
                 this.updateProviderDescription();
                 this.updateApiFormVisibility(settingsManager);
+                
+                // Se è selezionato GitHub, aggiungiamo un listener per il token
+                if (this.apiProviderSelect.value === 'github' && this.apiTokenInput) {
+                    // Rimuoviamo eventuali listener esistenti per evitare duplicati
+                    this.apiTokenInput.removeEventListener('blur', this.loadGitHubModels);
+                    
+                    // Aggiungiamo un nuovo listener
+                    this.loadGitHubModels = async () => {
+                        if (this.apiTokenInput.value.trim()) {
+                            await this.loadDynamicGitHubModels(this.apiTokenInput.value.trim());
+                        }
+                    };
+                    
+                    this.apiTokenInput.addEventListener('blur', this.loadGitHubModels);
+                }
             });
         }
-        
-        // Model selection
+          // Model selection
         if (this.apiModelSelect) {
-            this.apiModelSelect.addEventListener('change', () => {
+            this.apiModelSelect.addEventListener('change', async () => {
                 if (this.apiModelSelect.value === 'custom' && this.apiCustomModelField) {
                     this.apiCustomModelField.classList.remove('hidden');
                 } else if (this.apiCustomModelField) {
                     this.apiCustomModelField.classList.add('hidden');
+                }
+                
+                // Check model availability if Hugging Face is selected
+                if (this.apiProviderSelect && this.apiProviderSelect.value === 'huggingface' && 
+                    this.apiModelSelect.value !== 'custom' && this.apiTokenInput && this.apiTokenInput.value) {
+                    
+                    const modelId = this.apiModelSelect.value;
+                    const token = this.apiTokenInput.value;
+                    
+                    // Show info message while checking
+                    const notificationService = new NotificationService();
+                    notificationService.showNotification(`Verificando la disponibilità del modello ${modelId}...`, 'info');
+                    
+                    try {
+                        const result = await LLMAgnostic.checkModelAvailability(modelId, token);
+                        
+                        if (result.available) {
+                            notificationService.showNotification(`Modello ${modelId} è disponibile!`, 'success');
+                        } else {
+                            notificationService.showNotification(`${result.error}`, 'warning');
+                        }
+                    } catch (error) {
+                        console.error('Error checking model availability:', error);
+                    }
+                }
+                
+                // Check model availability if GitHub is selected
+                if (this.apiProviderSelect && this.apiProviderSelect.value === 'github' && 
+                    this.apiModelSelect.value !== 'custom' && this.apiTokenInput && this.apiTokenInput.value) {
+                    
+                    const modelId = this.apiModelSelect.value;
+                    const token = this.apiTokenInput.value;
+                    
+                    // Show info message while checking
+                    const notificationService = new NotificationService();
+                    notificationService.showNotification(`Verificando la disponibilità del modello GitHub ${modelId}...`, 'info');
+                    
+                    try {
+                        // Get all GitHub models to verify availability
+                        const result = await LLMAgnostic.getGitHubModels(token);
+                        
+                        if (result.success) {
+                            notificationService.showNotification(`Connessione a GitHub Models riuscita!`, 'success');
+                        } else {
+                            notificationService.showNotification(`${result.error}`, 'warning');
+                        }
+                    } catch (error) {
+                        console.error('Error checking GitHub model availability:', error);
+                        notificationService.showNotification(`Errore durante la verifica del modello: ${error.message}`, 'error');
+                    }
+                }
+            });
+        }
+        
+        // Custom model input check
+        if (this.apiCustomModelInput) {
+            this.apiCustomModelInput.addEventListener('blur', async () => {
+                if (this.apiProviderSelect && this.apiProviderSelect.value === 'huggingface' && 
+                    this.apiModelSelect && this.apiModelSelect.value === 'custom' && 
+                    this.apiTokenInput && this.apiTokenInput.value && 
+                    this.apiCustomModelInput.value.trim()) {
+                    
+                    const modelId = this.apiCustomModelInput.value.trim();
+                    const token = this.apiTokenInput.value;
+                    
+                    // Show info message while checking
+                    const notificationService = new NotificationService();
+                    notificationService.showNotification(`Verificando la disponibilità del modello personalizzato ${modelId}...`, 'info');
+                    
+                    try {
+                        const result = await LLMAgnostic.checkModelAvailability(modelId, token);
+                        
+                        if (result.available) {
+                            notificationService.showNotification(`Modello personalizzato ${modelId} è disponibile!`, 'success');
+                        } else {
+                            notificationService.showNotification(`${result.error}`, 'warning');
+                        }
+                    } catch (error) {
+                        console.error('Error checking custom model availability:', error);
+                    }
+                }
+                
+                // Check custom model for GitHub
+                if (this.apiProviderSelect && this.apiProviderSelect.value === 'github' && 
+                    this.apiModelSelect && this.apiModelSelect.value === 'custom' && 
+                    this.apiTokenInput && this.apiTokenInput.value && 
+                    this.apiCustomModelInput.value.trim()) {
+                    
+                    const modelId = this.apiCustomModelInput.value.trim();
+                    const token = this.apiTokenInput.value;
+                    
+                    // Show info message while checking
+                    const notificationService = new NotificationService();
+                    notificationService.showNotification(`Verificando la disponibilità del modello GitHub personalizzato ${modelId}...`, 'info');
+                    
+                    try {
+                        // Get all GitHub models to check if connection works
+                        const result = await LLMAgnostic.getGitHubModels(token);
+                        
+                        if (result.success) {
+                            notificationService.showNotification(`Connessione a GitHub Models riuscita! Il modello personalizzato sarà utilizzato.`, 'success');
+                        } else {
+                            notificationService.showNotification(`${result.error}`, 'warning');
+                        }
+                    } catch (error) {
+                        console.error('Error checking GitHub custom model:', error);
+                        notificationService.showNotification(`Errore durante la verifica: ${error.message}`, 'error');
+                    }
                 }
             });
         }
@@ -388,15 +528,14 @@ class UIController {
                 this.testApiConnection.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
                 this.testApiConnection.disabled = true;
                 
-                try {
-                    // Create temporary config
-                    const tempConfig = {
-                        provider,
-                        token,
-                        endpoint: this.apiEndpointInput ? this.apiEndpointInput.value : '',
-                        model: this.apiModelSelect ? this.apiModelSelect.value : '',
-                        customModel: this.apiCustomModelInput ? this.apiCustomModelInput.value : ''
-                    };                    // Test connection by having settingsManager test the config
+                try {                // Create temporary config
+                const tempConfig = {
+                    provider,
+                    token: token.trim(), // Ensure token is trimmed
+                    endpoint: this.apiEndpointInput ? this.apiEndpointInput.value.trim() : '',
+                    model: this.apiModelSelect ? this.apiModelSelect.value : '',
+                    customModel: this.apiCustomModelInput ? this.apiCustomModelInput.value.trim() : ''
+                };// Test connection by having settingsManager test the config
                     const result = await settingsManager.testApiConnection(tempConfig);
                     
                     const notificationService = new NotificationService();
@@ -429,15 +568,14 @@ class UIController {
                     return;
                 }
                 
-                try {
-                    // Create and save config
-                    const newConfig = {
-                        provider,
-                        token,
-                        endpoint: this.apiEndpointInput ? this.apiEndpointInput.value : '',
-                        model: this.apiModelSelect ? this.apiModelSelect.value : '',
-                        customModel: this.apiCustomModelInput ? this.apiCustomModelInput.value : ''
-                    };
+                try {                // Create and save config
+                const newConfig = {
+                    provider,
+                    token: token.trim(), // Ensure token is trimmed
+                    endpoint: this.apiEndpointInput ? this.apiEndpointInput.value.trim() : '',
+                    model: this.apiModelSelect ? this.apiModelSelect.value : '',
+                    customModel: this.apiCustomModelInput ? this.apiCustomModelInput.value.trim() : ''
+                };
                     
                     settingsManager.saveApiConfig(newConfig);
                     this.updateApiInfoDisplay(newConfig);
@@ -449,13 +587,11 @@ class UIController {
                     notificationService.showNotification('API configuration saved successfully!', 'success');
                 } catch (error) {
                     const notificationService = new NotificationService();
-                    notificationService.showNotification(`Error saving configuration: ${error.message}`, 'error');
-                }
+                    notificationService.showNotification(`Error saving configuration: ${error.message}`, 'error');                }
             });
         }
     }
-    
-    /**
+      /**
      * Update the API provider description based on the selected provider
      */
     updateProviderDescription() {
@@ -465,7 +601,26 @@ class UIController {
         const providerConfig = CONFIG.API.PROVIDERS[provider];
         
         if (providerConfig) {
-            this.providerDescription.textContent = providerConfig.description;
+            // Update provider description
+            this.providerDescription.textContent = providerConfig.description;            // Update token help text if provider has token info
+            const tokenHelpText = UtilityService.getElementById('tokenHelpText');
+            if (tokenHelpText && providerConfig.tokenTip) {
+                tokenHelpText.classList.remove('hidden');
+                
+                // Set token help text with a more prominent button if URL is available
+                if (providerConfig.tokenUrl) {
+                    tokenHelpText.innerHTML = `${providerConfig.tokenTip} 
+                    <div class="token-button-container">
+                        <a href="${providerConfig.tokenUrl}" target="_blank" rel="noopener noreferrer" class="token-btn">
+                            <i class="fas fa-key"></i> Genera token ${providerConfig.name}
+                        </a>
+                    </div>`;
+                } else {
+                    tokenHelpText.innerHTML = providerConfig.tokenTip;
+                }
+            } else if (tokenHelpText) {
+                tokenHelpText.classList.add('hidden');
+            }
         }
     }
     
@@ -515,6 +670,15 @@ class UIController {
             // Hide custom model field initially
             if (this.apiCustomModelField) {
                 this.apiCustomModelField.classList.add('hidden');
+            }
+        }
+        
+        // Show/hide refresh models button for GitHub provider
+        if (this.refreshModelsContainer) {
+            if (provider === 'github') {
+                this.refreshModelsContainer.classList.remove('hidden');
+            } else {
+                this.refreshModelsContainer.classList.add('hidden');
             }
         }
     }
@@ -599,7 +763,15 @@ class UIController {
                     this.apiModelSelect.appendChild(option);
                 });
                 
-                // Set selected model
+                // If GitHub provider is selected and token exists, try to load models dynamically
+                if (config.provider === 'github' && config.token) {
+                    // Start async load of GitHub models
+                    setTimeout(() => {
+                        this.loadDynamicGitHubModels(config.token);
+                    }, 100);
+                }
+                
+                // Select the current model
                 if (config.model) {
                     this.apiModelSelect.value = config.model;
                 }
@@ -645,6 +817,60 @@ class UIController {
                 card.style.transform = 'translateY(0) rotateY(0)';
             }, index * 200);
         });
+    }
+    
+    /**
+     * Carica dinamicamente i modelli GitHub disponibili
+     * @param {string} token - Token GitHub API
+     */
+    async loadDynamicGitHubModels(token) {
+        if (!token || !this.apiModelSelect) return;
+        
+        try {
+            // Mostra un messaggio informativo
+            const notificationService = new NotificationService();
+            notificationService.showNotification('Caricamento dei modelli GitHub disponibili...', 'info');
+            
+            // Recupera i modelli da GitHub
+            const result = await LLMAgnostic.getGitHubModels(token);
+            
+            if (result.success && result.formattedModels && result.formattedModels.length > 0) {
+                // Salva l'opzione custom
+                const customOption = Array.from(this.apiModelSelect.options)
+                    .find(option => option.value === 'custom');
+                
+                // Svuota il select box mantenendo solo l'opzione custom
+                this.apiModelSelect.innerHTML = '';
+                
+                // Aggiungi i modelli dinamici
+                result.formattedModels.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.value;
+                    option.textContent = model.name;
+                    this.apiModelSelect.appendChild(option);
+                });
+                
+                // Aggiungi nuovamente l'opzione custom
+                if (customOption) {
+                    this.apiModelSelect.appendChild(customOption);
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'custom';
+                    option.textContent = 'Custom Model';
+                    this.apiModelSelect.appendChild(option);
+                }
+                
+                notificationService.showNotification(`Caricati ${result.formattedModels.length} modelli GitHub`, 'success');
+            } else if (result.error) {
+                notificationService.showNotification(`Errore nel caricamento dei modelli: ${result.error}`, 'warning');
+            } else {
+                notificationService.showNotification('Nessun modello trovato o errore nel formato dei dati', 'warning');
+            }
+        } catch (error) {
+            console.error('Error loading GitHub models:', error);
+            const notificationService = new NotificationService();
+            notificationService.showNotification(`Errore nel caricamento dei modelli: ${error.message}`, 'error');
+        }
     }
 }
 

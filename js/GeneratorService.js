@@ -151,13 +151,62 @@ class GeneratorService {
             // Add AI response to conversation history
             this.genConversationHistory.push(completion);
             // Display the generated text
-            this.outputManager.displayOutput(completion.content);
-        }
+            this.outputManager.displayOutput(completion.content);        }
         catch (error) {
             console.error('Error generating text:', error);
+            
+            let errorMessage = 'Impossibile generare il testo. Riprova.';
+            let errorDetails = '';
+            
+            // Try to parse detailed error information
+            try {
+                const errorInfo = JSON.parse(error.message);
+                
+                if (errorInfo.provider === 'openai') {
+                    if (errorInfo.originalError.includes("does not exist or you do not have access")) {
+                        // Handle specific OpenAI model access error
+                        const modelName = errorInfo.model || 'GPT-4';
+                        errorMessage = `Non hai accesso al modello ${modelName}.`;
+                        errorDetails = `
+                            <p>Possibili soluzioni:</p>
+                            <ul>
+                                <li>Verifica che la tua API key sia valida e abbia l'accesso al modello ${modelName}</li>
+                                <li>Seleziona un modello diverso nelle impostazioni API (ad esempio GPT-3.5-Turbo)</li>
+                                <li>Richiedi l'accesso al modello ${modelName} su OpenAI</li>
+                            </ul>
+                        `;
+                    } else if (errorInfo.originalError.includes("Incorrect API key")) {
+                        errorMessage = "API key di OpenAI non valida o scaduta.";
+                        errorDetails = "Controlla le tue impostazioni API e genera una nuova API key se necessario.";
+                    } else {
+                        errorMessage = "Errore nell'API OpenAI.";
+                        errorDetails = errorInfo.originalError;
+                    }
+                } else if (errorInfo.provider === 'huggingface') {
+                    errorMessage = "Errore nell'API Hugging Face.";
+                    errorDetails = errorInfo.originalError;
+                } else {
+                    errorMessage = `Errore nell'API ${errorInfo.provider || 'selezionata'}.`;
+                    errorDetails = errorInfo.originalError;
+                }
+            } catch (parseError) {
+                // If error isn't in our JSON format, use generic message
+                errorDetails = error.message;
+            }
+            
+            // Display error in the output
             if (this.outputManager.markdownOutput) {
-                this.outputManager.markdownOutput.innerHTML = `<p style="color: red;"><i class="fas fa-exclamation-triangle"></i> Errore: Impossibile generare il testo. Riprova.</p>`;
+                this.outputManager.markdownOutput.innerHTML = `
+                    <div class="api-error">
+                        <p><i class="fas fa-exclamation-triangle"></i> <strong>Errore:</strong> ${errorMessage}</p>
+                        ${errorDetails ? `<div class="error-details">${errorDetails}</div>` : ''}
+                    </div>`;
                 this.outputManager.markdownOutput.style.filter = 'none';
+            }
+            
+            // Show notification
+            if (window.notificationService) {
+                window.notificationService.showNotification(errorMessage, 'error');
             }
         } finally {
             // Reset processing state

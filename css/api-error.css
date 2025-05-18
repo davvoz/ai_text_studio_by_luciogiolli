@@ -1,0 +1,46 @@
+/* API Error Styling */
+.api-error {
+    background-color: rgba(231, 111, 81, 0.1);
+    border-left: 4px solid var(--error-color);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+}
+
+.api-error p {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.api-error .fa-exclamation-triangle {
+    color: var(--error-color);
+    margin-right: 8px;
+}
+
+.error-details {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.error-details ul {
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+.error-details li {
+    margin-bottom: 5px;
+}
+
+/* Dark theme adjustments */
+.dark-theme .api-error {
+    background-color: rgba(231, 111, 81, 0.15);
+}
+
+.dark-theme .error-details {
+    background-color: rgba(0, 0, 0, 0.2);
+}
