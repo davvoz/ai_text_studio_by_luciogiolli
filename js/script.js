@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
  * Initialize all application components
  */
 function initializeApplication() {    try {
+        // Verify that marked library is available
+        console.log("Marked library loaded:", typeof marked !== 'undefined');
+        
         // Initialize utility services
         const notificationService = new NotificationService();
         // Make notificationService available globally for error handling

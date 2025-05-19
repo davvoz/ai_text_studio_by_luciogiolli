@@ -140,18 +140,28 @@ class GeneratorService {
             this.genConversationHistory = this.genConversationHistory.slice(-5);
             // Make the API call to the AI
             const completion = await LLMGateway.chat.completions.create({
-                messages: [
-                    {
+                messages: [                    {
                         role: "system",
-                        content: "You are an expert content generator who creates engaging and informative text based on user input. You never add extra information or substantially change the meaning of the text. You support markdown formatting. Keep the same language as the input text."
+                        content: "You are an expert content generator who creates engaging and informative text based on user input. You support markdown formatting for headings, lists, emphasis, links, etc. IMPORTANT: Do not wrap your entire response in a code block with triple backticks (```). Apply markdown formatting directly to the text. Keep the same language as the input text."
                     },
                     ...this.genConversationHistory
                 ]
-            });
-            // Add AI response to conversation history
+            });            // Add AI response to conversation history
             this.genConversationHistory.push(completion);
+            
+            // Pulisci eventuali blocchi di codice esterni che avvolgono l'intero output
+            let cleanContent = completion.content;
+            
+            // Rimuovi eventuali blocchi di codice markdown che racchiudono l'intero output
+            const codeBlockRegex = /^```(?:markdown)?\s*([\s\S]*?)```$/;
+            const match = cleanContent.trim().match(codeBlockRegex);
+            if (match) {
+                console.log("Trovato blocco di codice che avvolge l'intero output, rimuovendo i delimitatori...");
+                cleanContent = match[1];
+            }
+            
             // Display the generated text
-            this.outputManager.displayOutput(completion.content);        }
+            this.outputManager.displayOutput(cleanContent);}
         catch (error) {
             console.error('Error generating text:', error);
             
