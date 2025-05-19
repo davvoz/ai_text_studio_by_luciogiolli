@@ -366,8 +366,7 @@ class GitHubProvider extends ProviderStrategy {    async testConnection(config) 
             throw new Error('GitHub API token is required');
         }
         
-        try {
-            console.log('Testing GitHub connection with config:', { ...config, token: '***' });
+        try {            console.log('Testing GitHub connection with config:', { ...config, token: '***' });
             const endpoint = 'https://models.github.ai/catalog/models';
             
             console.log('Fetching from endpoint:', endpoint);
@@ -379,29 +378,27 @@ class GitHubProvider extends ProviderStrategy {    async testConnection(config) 
                 xhr.setRequestHeader('Authorization', `Bearer ${config.token.trim()}`);
                 xhr.setRequestHeader('X-GitHub-Api-Version', '2022-11-28');
                 
-                xhr.onload = function() {
-                    console.log('GitHub API response status:', xhr.status);
+                xhr.onload = function() {                    console.log('GitHub API response status:', xhr.status);
                     
                     if (xhr.status >= 200 && xhr.status < 300) {
                         try {
                             const data = JSON.parse(xhr.responseText);
-                            console.log('GitHub API response successful, received data:', data ? 'Data received' : 'No data');
+                            console.log('GitHub API response successful, received data:', data);
                             resolve({ success: true, message: 'Connection to GitHub Models successful' });
                         } catch (error) {
                             console.error('Error parsing GitHub API response:', error);
                             reject(new Error(`Error parsing GitHub API response: ${error.message}`));
-                        }
-                    } else if (xhr.status === 401) {
+                        }                    } else if (xhr.status === 401) {
+                        console.error('GitHub API authorization error:', xhr.responseText);
                         reject(new Error('Token GitHub non valido. Verifica le tue credenziali.'));
                     } else {
-                        console.error('GitHub API error response:', xhr.responseText);
+                        console.error('GitHub API error response:', xhr.status, xhr.responseText);
                         reject(new Error(`Errore API GitHub: ${xhr.status}. Verifica che il token e le impostazioni siano corretti.`));
                     }
                 };
-                
-                xhr.onerror = function() {
-                    console.error('GitHub API request failed');
-                    reject(new Error('Errore di connessione all\'API GitHub. Verifica la tua connessione di rete.'));
+                  xhr.onerror = function() {
+                    console.error('GitHub API request failed due to network error or CORS issue');
+                    reject(new Error('Errore di connessione all\'API GitHub. Verifica la tua connessione di rete o se ci sono problemi di CORS.'));
                 };
                 
                 xhr.send();
@@ -439,22 +436,25 @@ class GitHubProvider extends ProviderStrategy {    async testConnection(config) 
                     max_tokens: 1024
                 };
                 
-                xhr.onload = function() {
-                    if (xhr.status >= 200 && xhr.status < 300) {
+                xhr.onload = function() {                    if (xhr.status >= 200 && xhr.status < 300) {
                         try {
                             const responseData = JSON.parse(xhr.responseText);
+                            console.log('GitHub completions API response:', responseData);
                             resolve({
                                 role: "assistant",
                                 content: responseData.choices?.[0]?.message?.content || 'No response generated'
                             });
                         } catch (error) {
+                            console.error('Error parsing GitHub API response:', error, xhr.responseText);
                             reject(new Error(`Error parsing GitHub API response: ${error.message}`));
-                        }
-                    } else if (xhr.status === 401) {
+                        }                    } else if (xhr.status === 401) {
+                        console.error('GitHub API authorization error:', xhr.responseText);
                         reject(new Error(`Autenticazione fallita. Verifica il tuo token GitHub. Error: ${xhr.status}`));
                     } else if (xhr.status === 404) {
+                        console.error('GitHub API model not found:', xhr.responseText);
                         reject(new Error(`Modello non trovato: "${modelName}". Verifica che il nome del modello sia corretto o scegli un altro modello.`));
                     } else {
+                        console.error('GitHub API error response:', xhr.status, xhr.responseText);
                         reject(new Error(`Errore API GitHub: ${xhr.status} ${xhr.responseText}`));
                     }
                 };
@@ -489,11 +489,10 @@ class GitHubProvider extends ProviderStrategy {    async testConnection(config) 
                 
                 xhr.onload = function() {
                     console.log('GitHub models API response status:', xhr.status);
-                    
-                    if (xhr.status >= 200 && xhr.status < 300) {
+                      if (xhr.status >= 200 && xhr.status < 300) {
                         try {
                             const modelsData = JSON.parse(xhr.responseText);
-                            console.log('GitHub models API response successful, received models:', modelsData ? modelsData.length + ' models' : 'No models');
+                            console.log('GitHub models API response successful, received models:', modelsData);
                             
                             // Formatta i modelli per l'uso nell'interfaccia utente
                             const formattedModels = modelsData.map(model => ({
@@ -512,14 +511,14 @@ class GitHubProvider extends ProviderStrategy {    async testConnection(config) 
                         } catch (error) {
                             console.error('Error parsing GitHub models API response:', error);
                             reject(new Error(`Error parsing GitHub models API response: ${error.message}`));
-                        }
-                    } else if (xhr.status === 401) {
+                        }                    } else if (xhr.status === 401) {
+                        console.error('GitHub models API authorization error:', xhr.responseText);
                         resolve({ 
                             success: false, 
                             error: 'Token GitHub non valido. Verifica le tue credenziali.'
                         });
                     } else {
-                        console.error('GitHub models API error response:', xhr.responseText);
+                        console.error('GitHub models API error response:', xhr.status, xhr.responseText);
                         resolve({ 
                             success: false, 
                             error: `Errore API GitHub: ${xhr.status}. Verifica che il token e le impostazioni siano corretti.`
