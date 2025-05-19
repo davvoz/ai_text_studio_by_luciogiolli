@@ -1,6 +1,6 @@
 import CONFIG from './CONFIG.js';
 import UtilityService from './UtilityService.js';
-import LLMAgnostic from './LLMAgnostic.js';
+import LLMGateway from './LLMGateway.js';
 import NotificationService from './NotificationService.js';
 
 /**
@@ -92,7 +92,7 @@ class SettingsManager {
         if (savedApiConfig) {
             this.apiConfig = savedApiConfig;
             
-            // Configure LLMAgnostic with the loaded API settings
+            // Configure LLMGateway with the loaded API settings
             this.configureAPI(savedApiConfig);
         }
     }    /**
@@ -135,14 +135,14 @@ class SettingsManager {
         // Save to localStorage
         UtilityService.saveToLocalStorage(CONFIG.API.STORAGE_KEY, this.apiConfig);
         
-        // Configure the LLMAgnostic with the new settings
+        // Configure the LLMGateway with the new settings
         this.configureAPI(this.apiConfig);
         
         return true;
     }
     
     /**
-     * Configure the LLMAgnostic with API settings
+     * Configure the LLMGateway with API settings
      * @param {Object} config - API configuration
      */    configureAPI(config) {
         if (!config) return;
@@ -160,60 +160,10 @@ class SettingsManager {
             llmConfig.model = config.model;
         }
         
-        // Configure LLMAgnostic
-        LLMAgnostic.configure(llmConfig);
+        // Configure LLMGateway
+        LLMGateway.configure(llmConfig);
     }
-    
-    /**
-     * Test API connection with given configuration
-     * @param {Object} config - API configuration to test
-     * @returns {Promise<Object>} - Result of the test
-     */
-    async testApiConnection(config) {
-        try {
-            if (!config) {
-                return { success: false, error: 'No configuration provided' };
-            }
-            
-            // Skip testing for mock provider
-            if (config.provider === 'mock') {
-                return { success: true };
-            }
-            
-            // Check if token is provided for providers that require it
-            const providerConfig = CONFIG.API.PROVIDERS[config.provider];
-            if (providerConfig && providerConfig.tokenRequired && !config.token) {
-                return { success: false, error: 'API token is required' };
-            }            // Configure LLMAgnostic with the test config
-            const llmConfig = {
-                provider: config.provider,
-                token: config.token ? config.token.trim() : '',
-                endpoint: config.endpoint
-            };
-            
-            // Use custom model if that option is selected
-            if (config.model === 'custom' && config.customModel) {
-                llmConfig.model = config.customModel;
-            } else {
-                llmConfig.model = config.model;
-            }
-              // Test the connection by sending a simple request
-            try {
-                // Per GitHub, usa un metodo specifico per testare la connessione
-                if (config.provider === 'github') {
-                    return await LLMAgnostic.testGitHubConnection(llmConfig.token);
-                }
-                
-                // Per altri provider, usa il metodo standard
-                const testResult = await LLMAgnostic.testConnection(llmConfig);
-                return testResult;
-            } catch (error) {
-                return { success: false, error: error.message };
-            }
-        } catch (error) {
-            return { success: false, error: error.message };
-        }
-    }    /**
+  /**
      * Get the prompt for a specific formatter style
      * @param {string} style - Formatter style
      * @returns {string} - The corresponding prompt

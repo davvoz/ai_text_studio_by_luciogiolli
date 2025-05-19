@@ -1,6 +1,6 @@
 import UtilityService from "./UtilityService.js";
 import CONFIG from "./CONFIG.js";
-import LLMAgnostic from "./LLMAgnostic.js";
+import LLMGateway from "./LLMGateway.js";
 /**
  * GeneratorService - Handles text generation functionality
  */
@@ -139,7 +139,7 @@ class GeneratorService {
             // Only keep the last 5 messages to avoid token limits
             this.genConversationHistory = this.genConversationHistory.slice(-5);
             // Make the API call to the AI
-            const completion = await LLMAgnostic.chat.completions.create({
+            const completion = await LLMGateway.chat.completions.create({
                 messages: [
                     {
                         role: "system",

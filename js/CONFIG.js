@@ -52,13 +52,8 @@ const CONFIG = {
                 endpointRequired: false,
                 modelOptions: [
                     { value: 'openai/gpt-4o-mini', name: 'GPT-4o Mini' },
-                    { value: 'openai/gpt-4', name: 'GPT-4' },
-                    { value: 'openai/gpt-4o', name: 'GPT-4o' },
-                    { value: 'openai/gpt-4-turbo', name: 'GPT-4 Turbo' },
-                    { value: 'llama-3/meta-llama-3-8b', name: 'Meta Llama 3 (8B)' },
-                    { value: 'llama-3/meta-llama-3-70b', name: 'Meta Llama 3 (70B)' },
-                    { value: 'mistral/mistral-small', name: 'Mistral Small' },
-                    { value: 'custom', name: 'Custom Model' }
+                    { value: 'openai/gpt-4.1', name: 'GPT-4.1' },
+                    { value: 'openai/gpt-4o', name: 'GPT-4o' }
                 ],
                 tokenUrl: 'https://github.com/settings/tokens',
                 tokenTip: 'Per GitHub Models: crea un token con i permessi appropriati nella pagina delle impostazioni del tuo account GitHub.'

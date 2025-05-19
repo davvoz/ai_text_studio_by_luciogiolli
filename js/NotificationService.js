@@ -20,6 +20,7 @@ class NotificationService {
      * @param {string} type - Type (success, error)
      */
     showNotification(message, type = 'success') {
+        console.log(`Notification: ${message}, Type: ${type}`);
         // Create notification element
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;

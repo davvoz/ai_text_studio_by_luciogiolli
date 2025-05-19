@@ -117,7 +117,7 @@ function exportDebugComponents() {
                 } catch (error) {
                     console.warn('Could not initialize debug components:', error);
                 }
-            }, 1000);
+            }, 2000);
         });
     }
 }
