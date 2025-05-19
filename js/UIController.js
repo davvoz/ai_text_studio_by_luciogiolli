@@ -42,8 +42,8 @@ class UIController {
         this.currentModelName = UtilityService.getElementById('currentModelName');
 
         // Elementi per la gestione dei modelli GitHub
-        this.refreshModelsContainer = UtilityService.getElementById('refreshModelsContainer');
-        this.refreshModels = UtilityService.getElementById('refreshModels');
+        //this.refreshModelsContainer = UtilityService.getElementById('refreshModelsContainer');
+        //this.refreshModels = UtilityService.getElementById('refreshModels');
     }
 
     /**
@@ -423,31 +423,7 @@ class UIController {
                     }
                 }
 
-                // Check model availability if GitHub is selected
-                if (this.apiProviderSelect && this.apiProviderSelect.value === 'github' &&
-                    this.apiModelSelect.value !== 'custom' && this.apiTokenInput && this.apiTokenInput.value) {
 
-                    const modelId = this.apiModelSelect.value;
-                    const token = this.apiTokenInput.value;
-
-                    // Show info message while checking
-                    const notificationService = new NotificationService();
-                    notificationService.showNotification(`Verificando la disponibilità del modello GitHub ${modelId}...`, 'info');
-
-                    // try {
-                    //     // Get all GitHub models to verify availability
-                    //     const result = await LLMGateway.getGitHubModels(token);
-
-                    //     if (result.success) {
-                    //         notificationService.showNotification(`Connessione a GitHub Models riuscita!`, 'success');
-                    //     } else {
-                    //         notificationService.showNotification(`${result.error}`, 'warning');
-                    //     }
-                    // } catch (error) {
-                    //     console.error('Error checking GitHub model availability:', error);
-                    //     notificationService.showNotification(`Errore durante la verifica del modello: ${error.message}`, 'error');
-                    // }
-                }
             });
         }
 
@@ -479,33 +455,7 @@ class UIController {
                     }
                 }
 
-                // Check custom model for GitHub
-                if (this.apiProviderSelect && this.apiProviderSelect.value === 'github' &&
-                    this.apiModelSelect && this.apiModelSelect.value === 'custom' &&
-                    this.apiTokenInput && this.apiTokenInput.value &&
-                    this.apiCustomModelInput.value.trim()) {
 
-                    const modelId = this.apiCustomModelInput.value.trim();
-                    const token = this.apiTokenInput.value;
-
-                    // Show info message while checking
-                    const notificationService = new NotificationService();
-                    notificationService.showNotification(`Verificando la disponibilità del modello GitHub personalizzato ${modelId}...`, 'info');
-
-                    try {
-                        // Get all GitHub models to check if connection works
-                        const result = await LLMGateway.getGitHubModels(token);
-
-                        if (result.success) {
-                            notificationService.showNotification(`Connessione a GitHub Models riuscita! Il modello personalizzato sarà utilizzato.`, 'success');
-                        } else {
-                            notificationService.showNotification(`${result.error}`, 'warning');
-                        }
-                    } catch (error) {
-                        console.error('Error checking GitHub custom model:', error);
-                        notificationService.showNotification(`Errore durante la verifica: ${error.message}`, 'error');
-                    }
-                }
             });
         }
         // Save API config

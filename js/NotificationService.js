@@ -17,7 +17,7 @@ class NotificationService {
     /**
      * Show notification with message and type
      * @param {string} message - Notification message
-     * @param {string} type - Type (success, error)
+     * @param {string} type - Type (success, error,info)
      */
     showNotification(message, type = 'success') {
         console.log(`Notification: ${message}, Type: ${type}`);
@@ -26,8 +26,25 @@ class NotificationService {
         notification.className = `notification ${type}`;
 
         // Create content
-        const icon = type === 'success' ? 'check-circle' : 'exclamation-triangle';
-        const title = type === 'success' ? 'Successo' : 'Errore';
+        let icon, title;
+        
+        switch(type) {
+            case 'success':
+                icon = 'check-circle';
+                title = 'Success';
+                break;
+            case 'error':
+                icon = 'exclamation-triangle';
+                title = 'Error';
+                break;
+            case 'info':
+                icon = 'info-circle';
+                title = 'Info';
+                break;
+            default:
+                icon = 'check-circle';
+                title = 'Success';
+        }
 
         notification.innerHTML = `
             <i class="fas fa-${icon}"></i>
