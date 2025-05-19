@@ -4,8 +4,7 @@ import LLMGateway from "./LLMGateway.js";
 /**
  * GeneratorService - Handles text generation functionality
  */
-class GeneratorService {
-    constructor(notificationService, outputManager, settingsManager) {
+class GeneratorService {    constructor(notificationService, outputManager, settingsManager) {
         this.notificationService = notificationService;
         this.outputManager = outputManager;
         this.settingsManager = settingsManager;
@@ -13,6 +12,7 @@ class GeneratorService {
         // Initialize state
         this.selectedGenStyle = 'news';
         this.selectedLanguage = CONFIG.LANGUAGES.DEFAULT;
+        this.selectedLength = 'medium'; // Default to medium length
         this.genConversationHistory = [];
 
         // Cache DOM elements
@@ -23,6 +23,11 @@ class GeneratorService {
         this.loader = UtilityService.getElementById('loader');
         this.customLanguageWrapper = UtilityService.getElementById('customLanguageWrapper');
         this.customLanguageInput = UtilityService.getElementById('customLanguage');
+        
+        // Length selection buttons
+        this.lengthShortBtn = UtilityService.getElementById('lengthShort');
+        this.lengthMediumBtn = UtilityService.getElementById('lengthMedium');
+        this.lengthLongBtn = UtilityService.getElementById('lengthLong');
     }
 
     /**
@@ -66,9 +71,38 @@ class GeneratorService {
             });
         }
 
+        // Setup length selection buttons
+        this.setupLengthButtons();
+
         // Setup generate button
         this.generateBtn.addEventListener('click', () => {
             this.generateText();
+        });
+    }
+    
+    /**
+     * Setup length selection buttons
+     */
+    setupLengthButtons() {
+        if (!this.lengthShortBtn || !this.lengthMediumBtn || !this.lengthLongBtn) {
+            console.warn('Length selection buttons not found');
+            return;
+        }
+        
+        const lengthButtons = [this.lengthShortBtn, this.lengthMediumBtn, this.lengthLongBtn];
+        
+        // Add click event listeners to all length buttons
+        lengthButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                lengthButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Update selected length
+                this.selectedLength = button.dataset.length;
+            });
         });
     }
 
@@ -106,6 +140,22 @@ class GeneratorService {
             this.generateBtn.innerHTML = '<i class="fas fa-robot"></i> Genera testo';
             this.generateBtn.disabled = false;
         }
+    }    /**
+     * Get the appropriate length instruction based on selected length
+     * @param {string} length - Selected length ('short', 'medium', or 'long')
+     * @returns {string} - The corresponding length instruction
+     */
+    getLengthInstruction(length) {
+        switch (length) {
+            case 'short':
+                return 'Please keep the response concise and brief, approximately 150-250 words.';
+            case 'medium':
+                return 'Please provide a moderate-length response, approximately 400-600 words.';
+            case 'long':
+                return 'Please provide a detailed and comprehensive response, approximately 800-1200 words.';
+            default:
+                return 'Please provide a moderate-length response, approximately 400-600 words.';
+        }
     }
 
     /**
@@ -123,36 +173,46 @@ class GeneratorService {
         // Show processing state
         this.showProcessingState();
 
-        try {            // Get the appropriate prompt
+        try {
+            // Get the appropriate prompt
             const prompt = this.settingsManager.getGeneratorPrompt(this.selectedGenStyle);
             const languageInstruction = this.selectedLanguage || CONFIG.LANGUAGES.OPTIONS['italian'];
             
-            // Create the full prompt with language instruction
-            const fullPrompt = `${prompt}\n\n${keywords}\n\n${languageInstruction}`;
+            // Get length instruction based on selected length
+            const lengthInstruction = this.getLengthInstruction(this.selectedLength);
+            
+            // Create the full prompt with language and length instructions
+            const fullPrompt = `${prompt}\n\n${keywords}\n\n${languageInstruction}\n\n${lengthInstruction}`;
             
             const newMessage = {
                 role: "user",
                 content: fullPrompt
             };
+            
             // Add the new message to conversation history
             this.genConversationHistory.push(newMessage);
+            
             // Only keep the last 5 messages to avoid token limits
             this.genConversationHistory = this.genConversationHistory.slice(-5);
+            
             // Make the API call to the AI
             const completion = await LLMGateway.chat.completions.create({
-                messages: [                    {
+                messages: [
+                    {
                         role: "system",
-                        content: "You are an expert content generator who creates engaging and informative text based on user input. You support markdown formatting for headings, lists, emphasis, links, etc. IMPORTANT: Do not wrap your entire response in a code block with triple backticks (```). Apply markdown formatting directly to the text. Keep the same language as the input text."
+                        content: "You are an expert content generator who creates engaging and informative text based on user input. You support markdown formatting for headings, lists, emphasis, links, etc. IMPORTANT: Do not wrap your entire response in a code block with triple backticks (```). Apply markdown formatting directly to the text. Keep the same language as the input text. Strictly follow any length instructions provided in the prompt."
                     },
                     ...this.genConversationHistory
                 ]
-            });            // Add AI response to conversation history
+            });
+            
+            // Add AI response to conversation history
             this.genConversationHistory.push(completion);
             
-            // Pulisci eventuali blocchi di codice esterni che avvolgono l'intero output
+            // Clean any code blocks that wrap the entire output
             let cleanContent = completion.content;
             
-            // Rimuovi eventuali blocchi di codice markdown che racchiudono l'intero output
+            // Remove markdown code blocks that wrap the entire output
             const codeBlockRegex = /^```(?:markdown)?\s*([\s\S]*?)```$/;
             const match = cleanContent.trim().match(codeBlockRegex);
             if (match) {
@@ -161,8 +221,8 @@ class GeneratorService {
             }
             
             // Display the generated text
-            this.outputManager.displayOutput(cleanContent);}
-        catch (error) {
+            this.outputManager.displayOutput(cleanContent);
+        } catch (error) {
             console.error('Error generating text:', error);
             
             let errorMessage = 'Impossibile generare il testo. Riprova.';

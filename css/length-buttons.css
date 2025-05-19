@@ -1,0 +1,46 @@
+/* Length Button Styles */
+.length-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.length-btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.length-btn:hover {
+    background-color: var(--hover-color);
+}
+
+.length-btn.active {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.length-btn i {
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .length-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .length-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
