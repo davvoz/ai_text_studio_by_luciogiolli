@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/animations.css">    <link rel="stylesheet" href="css/refresh-button.css">
     <link rel="stylesheet" href="css/markdown.css">
     <link rel="stylesheet" href="css/length-buttons.css">
+    <link rel="stylesheet" href="css/share-buttons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -137,12 +138,21 @@
                     </div>
                     
                     <div class="output-section">
-                        <div class="card output-card">
-                            <div class="card-header with-actions">
+                        <div class="card output-card">                            <div class="card-header with-actions">
                                 <h2><i class="fas fa-file-alt"></i> Result</h2>
                                 <div class="card-actions">
                                     <button id="copyOutput" class="icon-btn" title="Copy to clipboard"><i class="fas fa-copy"></i></button>
-                                    <button id="downloadOutput" class="icon-btn" title="Download as file"><i class="fas fa-download"></i></button>
+                                    <button id="downloadOutput" class="icon-btn" title="Download as file"><i class="fas fa-download"></i></button>                                    <div class="share-dropdown">
+                                        <button id="shareButton" class="icon-btn" title="Share this content"><i class="fas fa-share-alt"></i></button>
+                                        <div id="shareMenu" class="share-menu">
+                                            <button id="shareTwitter" class="share-btn" title="Share on Twitter"><i class="fab fa-twitter"></i> Twitter</button>
+                                            <button id="shareFacebook" class="share-btn" title="Share on Facebook"><i class="fab fa-facebook"></i> Facebook</button>
+                                            <button id="shareLinkedIn" class="share-btn" title="Share on LinkedIn"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                                            <button id="shareWhatsApp" class="share-btn" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                                            <button id="shareTelegram" class="share-btn" title="Share on Telegram"><i class="fab fa-telegram"></i> Telegram</button>
+                                            <button id="shareEmail" class="share-btn" title="Share via Email"><i class="fas fa-envelope"></i> Email</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">

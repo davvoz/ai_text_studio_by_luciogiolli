@@ -16,6 +16,7 @@
 :root {
     /* Light theme colors - Earthy, elegant palette */
     --primary-color: #2A9D8F;
+    --primary-color-rgb: 42, 157, 143;
     --secondary-color: #E9C46A;
     --accent-color: #F4A261;
     --highlight-color: #E76F51;

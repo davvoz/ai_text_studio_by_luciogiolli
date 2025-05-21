@@ -1,0 +1,99 @@
+/* Share Button Styles */
+.share-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.share-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 180px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 50;
+    overflow: hidden;
+    transform-origin: top right;
+    transform: scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.2s var(--transition-bounce), 
+                opacity 0.2s var(--transition-smooth),
+                visibility 0.2s var(--transition-smooth);
+    margin-top: 5px;
+}
+
+.share-menu.active {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.share-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background-color 0.2s var(--transition-fast);
+    font-size: 0.9rem;
+}
+
+.share-btn:hover {
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+}
+
+.share-btn i {
+    margin-right: 10px;
+    width: 18px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Social platform specific colors */
+#shareTwitter i {
+    color: #1DA1F2;
+}
+
+#shareFacebook i {
+    color: #4267B2;
+}
+
+#shareLinkedIn i {
+    color: #0077B5;
+}
+
+#shareWhatsApp i {
+    color: #25D366;
+}
+
+#shareTelegram i {
+    color: #0088cc;
+}
+
+#shareEmail i {
+    color: #D44638;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .share-menu {
+        width: 160px;
+    }
+    
+    .share-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Animation for button press */
+.share-btn:active {
+    transform: scale(0.95);
+}
